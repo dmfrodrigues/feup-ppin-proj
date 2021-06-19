@@ -27,7 +27,7 @@ jobs:
     - name: report1
       run: |
         cd report
-        latexmk -pdf main.tex
+        latexmk -f -pdf main.tex
 
     - name: Upload report
       uses: actions/upload-artifact@v2
