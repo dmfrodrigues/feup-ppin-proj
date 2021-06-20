@@ -316,6 +316,30 @@ Para obter um \textit{feedback} mais geral, questionámos os inquiridos acerca d
 Por fim, para obter um \textit{feedback} mais subjetivo colocamos uma área aberta a sugestões. Aí obtivemos várias respostas interessantes que nos ajudaram, sendo até algumas incluídas no próprio projeto.
 Com base nestes resultados, pudemos verificar que o projeto tinha asas para continuar, tendo obtido uma validação externa favorável por parte dos alunos da FEUP, que tal como o meio ambiente, seriam beneficiados.
 
+% \cite{dl-152d-2017} <-- nao acho que encaixe bem aqui
+% https://www.pordata.pt/Portugal/Res%C3%ADduos+urbanos+recolhidos+selectivamente+ou+reciclados+(percentagem)-1228 <-- nao utilizado em lado nenhum. assumo que se pode eliminar.
+
+
+\section{Soluções tecnológicas}
+
+De forma a podermos descrever o projeto no capítulo \ref{ch:descricao} sem demoras e com o mínimo de apartes possível, apresenta-se esta secção para aprofundar, de uma forma genérica, algumas das tecnologias que serão mencionadas posteriormente, ainda sem concretizar especificamente sobre a sua utilização neste projeto.
+
+\subsection{NFC}
+
+% \begin{figure}[ht]
+%   \centering
+%   \includesvg[width = 20mm]{img/nfc.svg}
+%   \caption{Logótipo indicativo de dispositivos que suportam NFC}
+% \end{figure}
+
+A tecnologia NFC (\textit{Near-Field Communication}, comunicação por campo de proximidade) é um conjunto de protocolos para comunicação entre dispositivos eletrónicos a uma distância menor do que $\SI{4}{\centi\meter}$ para transmissões de velocidade lenta. Estes protocolos operam a $\SI{13.56}{\mega \hertz}$ (na região da rádio de onda curta), e permitem transmitir entre \SIrange{106}{424}{\kilo \bit / \second} de informação.
+
+Em geral, para dois dispositivos comunicarem (os chamados \textit{transponders}, porque são capazes de transmitir/receber sinais, e responder de forma adequada) é necessário ambos serem alimentados por fontes de energia elétrica, como acontece com outras tecnologias bem-conhecidas: Bluetooth, WiFi, etc.
+
+O fator distintivo da tecnologia NFC é que exige que apenas um dispositivo seja alimentado eletricamente (o dispositivo ativo), e que o outro dispositivo não necessite de alimentação elétrica (o dispositivo passivo, também conhecido como \textit{tag} ou \textit{etiqueta}). Isto porque o dispositivo ativo é capaz de, através de uma antena, gerar um campo magnético oscilatório de curto alcance que, por indução eletromagnética, provoca acoplamento indutivo com a antena do dispositivo passivo, alimentando a antena do dispositivo passivo com uma pequena potência, suficiente para este transmitir através da sua própria antena a informação que esteja guardada. As etiquetas NFC são geralmente capazes de guardar entre \SIrange{96}{8192}{\byte} de dados, mais do que o necessário por exemplo para guardar um identificador único com $\SI{32}{\bit}$, ou $\SI{4}{\byte}$, que permite cerca de quatro mil milhões de combinações diferentes.
+
+Esta tecnologia é bem conhecida e amplamente adotada. O NFC foi inventado em 2003 pelo consórcio Philips/Sony, que mais tarde fundaram o \textit{NFC Forum} em conjunto com a Nokia. O primeiro telemóvel equipado com NFC foi o Nokia 6131, lançado em 2006, e os primeiros \textit{smartphones} com esta tecnologia foram lançados em 2010 pela Nokia e pela Samsung, e dado que a Samsung utiliza Android nos seus dispositivos, foi também nesse ano que o NFC foi incluído pela primeira vez num sistema operativo móvel de massas. Desde então, esta tecnologia tem-se tornado cada vez mais frequente: em 2015 a maioria (54\%) dos \textit{smartphones} na Europa já suportavam NFC, e em 2018 eram cerca de 79\%. A percentagem de dispositivos Android com suporte NFC manteve-se à volta dos 60\% no período 2015-2018, sendo que todos os \textit{smartphones} lançados após e incluindo o iPhone 6 (2014) suportam NFC \cite{scientiamobile}. A tecnologia NFC é também frequentemente usada em métodos de pagamento sem contacto, como cartões de crédito, pagamentos com \textit{smartphones} e bilhetes de transportes públicos.
+
 \nocite{*}
 \bibliographystyle{acm}
 \clearpage
