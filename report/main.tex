@@ -20,6 +20,7 @@
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{glossaries}
 \usepackage{titlepic}
 \usepackage{lmodern}
 \renewcommand{\familydefault}{\sfdefault}
@@ -143,6 +144,24 @@ Proficiência Pessoal e Interpessoal
     \end{tabular}
 }
 \date{6 de Junho de 2021}
+
+\makeglossaries
+\newglossaryentry{rsu}{
+    name=resíduo sólido urbano,
+    description={Designado abreviadamente de RSU, é um objeto ou substância sólida que, na sua condição atual, não possui utilidade para quem o detém, pelo que deve ser descartado de forma adequada. Não possuir utilidade para quem o detém não significa que não tenha valor económico: não só as matérias-primas do qual o RSU é feito possuem geralmente valor económico, como o RSU pode ser útil a outra pessoa ou empresa que seja capaz de reutilizar/reciclar o RSU. Neste documento os termos "lixo" e "resíduos" são usados como sinónimos de RSU}
+}
+\newglossaryentry{lixo}{
+    name=lixo,
+    description={Equivalente a resíduo sólido urbano}
+}
+\newglossaryentry{entidade gestora}{
+    name=entidade gestora,
+    description={Entidade que gere a recolha e tratamento dos resíduos sólidos urbanos numa determinada zona; pode-se tratar, por exemplo, de um município, de uma empresa municipal especializada, ou de uma entidade trans-municipal \cite{dl-152d-2017}}
+}
+\newglossaryentry{justica ambiental}{
+    name=justiça ambiental,
+    description={Termo utilizado para enquadrar os problemas ambientais (aquecimento global, poluição, destruição de habitat) como questões éticas e políticas, e não apenas como questões ambientais ou físicas. Geralmente refere-se à forma injusta como diferentes países e classes sociais são afetados por problemas ambientais originados pela forma como a sociedade de consumo mundial opera, pelo que a justiça ambiental é atingida quando cada pessoa é responsabilizada, tributada ou processada judicialmente em proporção com o impacto negativo que tem no meio ambiente}
+}
 
 \usepackage[utf8]{inputenc}
 \usepackage{array, booktabs}
