@@ -418,6 +418,441 @@ Estes dispositivos são especialmente desenhados para terem grande autonomia, du
   \caption{Sensores de nível de enchimento}
 \end{figure}
 
+\chapter{Descrição do projeto}
+\label{ch:descricao}
+
+A implementação deste projeto depende da satisfação de três grandes partes:
+
+\begin{itemize}
+    \itemsep0em
+    \item Pré-acordo com as instituições (municípios, empresas de gestão de resíduos, ...)
+    \item Desenvolvimento do equipamento necessário (pesagem de caixotes do lixo nos locais  onde há recolha ao domicílio, ou pesagem nos ecopontos).
+    \item Desenvolvimento do software de gestão, da aplicação móvel/web app e do servidor que suporte ambas as interfaces.
+\end{itemize}
+
+Para efeitos de gestão de resíduos, considera-se que a menor unidade é a \textit{habitação}. Uma habitação é uma fração, edifício, conjunto de edifícios, terreno não-edificado ou outro, ao qual seja prestado o serviço de recolha de resíduos, mesmo que não seja habitado (a escolha da palavra \textit{habitação} deve-se principalmente à facilidade de compreensão do projeto). Cada habitação é identificada pelo seu endereço postal. De forma a simplificar a logística, vamos considerar que a cada contador de água corresponde uma habitação.
+
+\section{Sistema centralizado}
+
+A implementação deste projeto requer o desenvolvimento de um sistema centralizado para gerir e apresentar os dados resultantes da operação do sistema, e melhor planear como reagir a alterações no sistema.
+
+Este sistema é desenvolvido apenas uma vez (por se tratar essencialmente de \textit{software}), e é distribuído a cada entidade gestora. Cada entidade gestora deve adquirir uma licença para usar o sistema, que deverá ser anual e custar uma quantidade não simbólica, mas bastante menor do que o custo inicial para a entidade gestora (que inclui também equipamentos, a parte mais cara).
+
+O sistema irá receber informação regularmente de ecopontos, de forma a poder apresentar informação sobre a disponibilidade de cada ecoponto de receber mais resíduos. O sistema permitirá também centralizar a informação recolhida pelos camiões de lixo assim que terminem os serviços de recolha e regressem à base.
+
+Este sistema será implementado como um servidor HTTP, de forma a ser o mais flexível possível; este servidor deve ser capaz de interagir também com a rede celular móvel, para receber a informação dos ecopontos. O sistema fornecerá uma API (\textit{application programming interface}) com autenticação, permitindo ser acedido por membros da entidade gestora através de um \textit{website} a partir de qualquer dispositivo que disponha de um \textit{web browser}. Esta API será também usada para permitir à aplicação móvel/web app utilizada pelos cidadãos aceder a alguma informação do sistema, principalmente a informação que lhes disser respeito.
+
+\section{Recolha de resíduos}
+
+Existem essencialmente três formas distintas de recolha de lixo:
+\begin{itemize}
+    \itemsep0em
+    \item As pessoas que habitam em casas em zonas esparsamente povoadas beneficiam tendencialmente de recolha periódica ao domicílio.
+    \item As pessoas que habitam em apartamentos fora de grandes centros populacionais ou em condomínios beneficiam de recolha periódica de contentores alocados ao condomínio ou ao prédio.
+    \item As pessoas que habitam em grandes centros populacionais utilizam ecopontos, dado que a densidade populacional justifica uma grande densidade de ecopontos, que é suficiente para que a deslocação a um ecoponto não acarrete incómodo excessivo.
+\end{itemize}
+
+De forma a quantificar os resíduos urbanos gerados pelas pessoas, deve ser empregue o equipamento necessário à pesagem dos resíduos sólidos urbanos nestes três contextos.
+
+\subsection{Recolha ao domicílio}
+% explicitar melhor o "fornecer" / caso de vandalismo -> câmara fornece 1a unidade
+A entidade gestora deve adquirir ao presente projeto vários caixotes do lixo de cada tipo de resíduo, munidos das seguintes tecnologias:
+\begin{enumerate}
+    \itemsep0em
+    \item Uma etiqueta NFC passiva, que permite a leitura do identificador único do caixote (que se encontra associado a determinada habitação e ao tipo de lixo a que se destina) que permite a um dispositivo que use o sistema NFC facilmente identificar o caixote do lixo.
+    \item Um código QR que contenha o mesmo identificador único do caixote, usado como alternativa à etiqueta NFC passiva se esta se encontrar danificada.
+\end{enumerate}
+
+A entidade gestora deve posteriormente fornecer às pessoas os caixotes dimensionados de acordo com as necessidades estimadas da habitação.
+
+Adicionalmente, os camiões de recolha de lixo devem estar munidos das seguintes tecnologias:
+\begin{enumerate}
+    \itemsep0em
+    \item Um leitor NFC, que permita ler a etiqueta NFC do caixote, de forma a identificar a habitação que será creditada com esse lixo.
+    \item Uma balança, equipada no braço mecânico do camião, para medir a massa de lixo (basta subtrair a tara do caixote do lixo), ou equipada no compartimento do lixo (mede-se a diferença de massa antes e depois de esvaziar o caixote).
+\end{enumerate}
+
+\subsection{Recolha em ecopontos}
+
+A entidade gestora deve equipar os seus ecopontos com as seguintes tecnologias:
+\begin{enumerate}
+    \itemsep0em
+    \item Um dispositivo NFC ativo, que contém um identificador único desse contentor, e que controla uma tranca de forma a que, a cada vez que o contentor é aberto para depositar lixo, seja possível saber qual habitação será creditada com esse lixo.
+    \item Uma balança, para medir a massa de lixo que cada pessoa colocou no ecoponto (as medições são realizadas a cada vez que o ecoponto é aberto).
+    \item Um sensor de nível de enchimento, para permitir saber quanto volume do ecoponto se encontra vazio.
+    \item Um chip com SIM integrado para comunicar periodicamente com o sistema informático centralizado através da rede celular.
+\end{enumerate}
+
+A pedido das pessoas, a entidade gestora também deve emitir cartões com etiquetas NFC passivas, de forma a que pessoas que não disponham de dispositivos móveis que suportem NFC ou que não se encontrem disponíveis possam continuar a depositar os seus resíduos.
+
+\subsection{Recolha de contentores coletivos}
+
+O caso em que várias habitações utilizam os mesmos contentores não acessíveis ao público (por exemplo, num prédio de apartamentos gerido por um condomínio e com casa de lixo) possui semelhanças com a recolha ao domicílio (os contentores são propriedade privada do condomínio e encontram-se geralmente guardados em casas de lixo) e em ecopontos (várias residências usam os mesmos contentores), pelo que é necessária uma abordagem mista.
+
+A entidade gestora deve fornecer ao condomínio contentores de lixo equipados com a mesma tecnologia que os ecopontos, dispensando apenas o sensor de nível de enchimento e o chip com SIM dado que estes contentores não costumam estar disponíveis ao público e para os supostos utilizadores (os moradores desse condomínio) não é excessivamente incómodo deslocarem-se até à casa do lixo e verificarem se os contentores estão cheios.
+
+\section{Aplicação móvel}
+
+A aplicação móvel permite aos utilizadores acompanhar o processo de recolha e gestão dos resíduos que geraram. Cada utilizador deverá associar a aplicação à habitação que pretende gerir; cada utilizador pode associar mais que uma habitação à aplicação (para poder gerir várias habitações ao mesmo tempo), e vários utilizadores podem ter as suas aplicações associadas à mesma habitação (para, por exemplo, todos os residentes de uma habitação poderem acompanhar a gestão dos seus resíduos conjuntos).
+
+A aplicação móvel atende a um conjunto de objetivos centrais, ao permitir às pessoas:
+\begin{itemize}
+    \itemsep0em
+    \item Tomar consciência da quantidade de resíduos que geram, de certa forma responsabilizando-as.
+    \item Saber que ecopontos ainda possuem espaço para evitar deslocações desnecessárias a ecopontos cheios de lixo.
+    \item Serem avisados com antecedência sobre quando serão as próximas recolhas, no caso de usufruírem de recolhas periódicas de lixo ao domicílio, de forma a colocarem os caixotes/contentores do lixo em local adequado para a recolha.
+    \item Pesquisar rapidamente em que contentor devem depositar um certo tipo de lixo.
+\end{itemize}
+
+Os mockups encontram-se disponíveis no anexo \ref{ch:anexo-mockups}.
+
+\newpage
+
+\section{Modo de operação}
+
+Esta secção sumariza as anteriores, de forma a mostrar como os diferentes utilizadores podem interagir com este sistema.
+
+\subsection{Para o cidadão}
+
+O cidadão pode-se autenticar na aplicação de duas formas:
+\begin{itemize}
+    \itemsep0em
+    \item Na aplicação móvel e web app, pode usar o identificador e palavra-chave enviados todos os meses na fatura de RSU. O identificador e palavra-chave são os mesmos todos os meses.
+    \item Na aplicação móvel, pode usar o código QR no caixote do lixo (se for recolha ao domicílio) ou no cartão (nos outros casos) e a palavra-chave na fatura de RSU.
+\end{itemize}
+
+O cidadão pode usar o sistema das seguintes formas:
+
+\begin{itemize}
+    \item Se o cidadão usufruir de recolha ao domicílio, a entidade gestora distribui à sua residência ou estabelecimento caixotes/contentores de lixo dimensionados de acordo com as necessidades esperadas. O cidadão deve ainda colocar o caixote correto para recolha numa zona adequada (por exemplo, o passeio ou a beira da rua) no horário estabelecido para recolha (que pode ser regular ou ser dinâmico em função das necessidades esperadas através de recolhas de lixo anteriores).
+    \item Se o cidadão usufruir de contentores coletivos, o condomínio disponibiliza contentores coletivos com tecnologias de pesagem como referido anteriormente, assim como também disponibiliza cartões de identificação aos seus condóminos. O cidadão deve separar o seu lixo dentro de portas, e posteriormente usar a aplicação móvel ou o cartão para se autenticar junto dos contentores coletivos, e depositar os resíduos separados nos respetivos contentores.
+    \item Se o cidadão não usufruir de nenhum dos métodos anteriores, assume-se que dispõe de ecopontos das imediações da sua residência. O cidadão deve separar o seu lixo dentro de portas, e posteriormente usar a aplicação móvel ou o cartão para se autenticar junto dos ecopontos, e depositar os resíduos separados nos respetivos ecopontos.
+\end{itemize}
+
+Se o caixote se encontrar danificado, ou se os lixeiros detetarem o funcionamento errado do equipamento entregue ao cidadão, a entidade gestora deve ser contactada; sugere-se que a entidade gestora não cobre pelos caixotes entregues na primeira vez, mas que se o caixote se danificar que a entidade gestora cobre ao cidadão uma quantia igual à que a entidade gestora dispender para adquirir um caixote novo à nossa empresa.
+
+\subsection{Para o condomínio}
+
+Cada condomínio receberá um ou vários contentores coletivos de lixo, de todos os tipos de resíduos, que deverá disponibilizar aos condóminos. Além disso, cada condomínio deve informar a entidade gestora de quantas residências irão beneficiar do sistema, para a entidade gestora requisitar e entregar os respetivos cartões. O administrador do condomínio age sempre em nome dos condóminos, dado que se considera ser o responsável pela manutenção dos equipamentos e pela requisição à entidade gestora de cartões para os condóminos. O administrados do condomínio não pode cobrar qualquer valor sobre a utilização dos contentores coletivos, e apenas pode cobrar pelos cartões a mesma quantia que dispendeu para os adquirir à entidade gestora.
+
+Da mesma forma que na recolha ao domicílio, o primeiro conjunto de contentores deve ser gratuíto para o condomínio, e sugere-se que a danificação de um contentor leve a entidade gestora a fornecer um novo contentor ao condomínio pelo mesmo valor que pagou à nossa empresa por esse contentor.
+
+\subsection{Para o pessoal de recolha de lixo}
+
+Os coletores de lixo (também conhecidos como \textit{lixeiros}) não necessitam de alterar significativamente a sua atuação, exceto em dois aspetos:
+
+\begin{itemize}
+    \item Na recolha domiciliária, devem abrir os caixotes para analisar rapidamente e decidir, dentro da razoabilidade e do curto intervalo de tempo disponível, se os resíduos se encontram suficientemente bem separados; se não se encontrarem corretamente separados a recolha não deve ser realizada.
+    \item Na recolha de contentores coletivos, devem abrir os contentores para analisar rapidamente se os resíduos se encontram suficientemente bem separados; se não for o caso, devem recolher o lixo na mesma mas tomar nota dessa ocorrência.
+\end{itemize}
+
+O condutor do camião do lixo é também responsável por monitorizar o correto funcionamento e utilização dos equipamentos durante um serviço de recolha, assegurando-se que os caixotes são corretamente identificados pelo sistema a bordo e que a massa de lixo é avaliada. Além disso, assim que terminar um serviço, o condutor do camião do lixo deve introduzir a informação no sistema; a operação deverá ser simples, bastando aproximar um dispositivo para realizar leitura por NFC ou usando um microchip com memória \textit{flash}.
+
+\subsection{Para o gestor}
+
+A entidade gestora é responsável pelo correto funcionamento dos equipamentos em geral, devendo assegurar-se que os equipamentos a bordo dos camiões se encontram em funcionamento, e suportar as despesas que advierem da necessidade de os reparar/substituir. Além disso, a entidade gestora também é diretamente responsável pelo correto funcionamento do equipamento dos ecopontos.
+
+Um administrador do sistema (geralmente um membro da entidade gestora com permissões elevadas) consegue aceder a toda a informação no sistema. A entidade gestora é responsável pelo uso cuidadoso da informação que dispõe; a empresa que implementa este projeto fornece os meios tecnológicos para assegurar a privacidade e segurança dos dados dos munícipes e utilizadores, mas os membros da entidade gestora são em última análise os encarregados de utilizar esses dados de forma responsável.
+
+\section{Estudo da concorrência}
+
+Várias empresas fornecem soluções semelhantes à presente proposta, com abrangências diferentes, níveis distintos de monitorização, e objetivos diferentes. Não obstante, a maior parte das soluções foca-se excessivamente na otimização da entidade gestora e gestão de frota (localização GPS dos veículos e contentores, monitorização de contentores, gestão de combustível, ...) e não na justiça ambiental, ou não são suficientemente justas por não serem abrangentes ou por não determinarem de forma justa a produção estimada de lixo.
+
+Vários projetos semelhantes encontram-se em implementação/planeamento ou já se encontram implementados em Portugal, mas possuem vários problemas associados. O mais comum (e que se encontra presente em todos os projetos que analisámos em Portugal) é que apenas os resíduos indiferenciados são tributados e os restantes resíduos recicláveis (plástico/metal, papel, vidro) não são contabilizados; este sistema incentiva as pessoas a apenas produzir menos resíduos indiferenciados, mas não promove a redução do total de resíduos gerados, que é uma meta muito importante porque os resíduos "recicláveis" não podem ser reciclados indefinidamente, pelo que uma parte desses resíduos terá que ser tratado de outra forma (geralmente enviados para aterros ou descarregados para o mar, com grande impacto ambiental).
+
+Além disso, ao considerar-se apenas os resíduos indiferenciados, os restantes resíduos são completamente ignorados, quando se pode tomar como certo um dos seguintes cenários:
+
+\begin{enumerate}
+    \itemsep0em
+    \item Ou estes resíduos têm tanto valor que podem mais tarde ser vendidos a um valor superior àquele que custou efetuar a recolha e processamento, sendo que os munícipes deviam ser recompensados.
+    \item Ou estes resíduos não têm valor suficiente, e os munícipes devem continuar a pagar para a entidade gestora processar esses resíduos, se bem que uma quantia menor dado que esses resíduos são valorizados.
+\end{enumerate}
+
+O que não se pode é tentar convencer as pessoas de que o processamento e valorização destes resíduos é uma operação com resultado financeiro nulo.
+
+\subsection{Tara recuperável}
+
+Os projetos de tara recuperável consistem na atribuição de um valor monetário (ou pontos num certo sistema, que se podem traduzir em benefícios) quando uma pessoa deposita um certo tipo de resíduos num contentor de recolha seletiva desse resíduo. Por exemplo, a devolução de garrafas de vidro de leite ou cerveja de tamanhos padronizados constituem os sistemas mais antigos de tara recuperável, por ser um tipo de embalagem muito utilizada e que, depois de limpa, apenas precisam de ser enchidas (e rotuladas de novo, se necessário), seladas e enviadas para superfícies comerciais. É possível efetuar também este procedimento para outros resíduos, nomeadamente embalagens de plástico PET, apesar do processo de recuperação de garrafas PET ser geralmente mais complexo por ser necessário criar embalagens de tamanhos diferentes (reciclagem), que difere do sistema de tara recuperável de embalagens de vidro padronizadas (que na prática constitui reutilização e não reciclagem).
+
+Os projetos de tara recuperável possuem todos o mesmo tipo de problemas: por serem de caráter voluntário não permitem implementar o princípio do poluidor-pagador e assim atingir uma justiça ambiental mais eficaz; além disso, este tipo de sistemas não pretende ser inclusivo, ao contrário da nossa proposta que permite, de forma obrigatória, gerir todos os resíduos de todas as pessoas de uma forma integrada com o funcionamento normal das entidades gestoras de resíduos e que não interfere exageradamente com as rotinas das pessoas.
+
+\subsection{ELTE}
+
+O grupo ELTE está cediado em Manchester (Inglaterra) com subsidiárias na Alemanha e Polónia. Este grupo de empresas fornece essencialmente soluções para gestão de frotas e recolha de lixo, com clientes em quase todos os países europeus, e foi contratada para implementar os serviços integrados de recolha de resíduos das cidades de Vilnius (Lituânia), Varsóvia (Polónia), Liubliana (Eslovénia) e Sófia (Bulgária).
+
+Esta empresa foca-se principalmente em planeamento de rotas e gestão da frota, apesar de também disponibilizar soluções interessantes para medição do nível de enchimento dos contentores e pesagem a bordo. No entanto, o foco é marcadamente a gestão do processo de recolha de resíduos, dado que não são identificadas as pessoas que depositam o lixo em contentores coletivos.
+
+\subsection{Distromel}
+
+A Distromel é uma empresa espanhola, de Huesca (Aragão), de sistemas de controlo e medição nas áreas da industria, agricultura, logística e ambiente.
+
+A solução apresentada pela Distromel, chamada SmartDTD, permite a implementação do sistema de poluidor-pagador em locais em que apenas é efetuada recolha ao domicílio. Na solução apresentada, cada caixote do lixo ou contentor possui uma célula de carga, e no momento de recolha do lixo apenas é necessário consultar a informação que o caixote/contentor tiver, dado que é o próprio caixote a efetuar a pesagem.
+
+Esta solução é relativamente inovadora, mas comporta um conjunto de problemas que não podem ser ignorados e que tornam a solução demasiado complexa e difícil de implementar, e com muitos pontos de falha que podem comprometer o correto funcionamento do sistema:
+
+\begin{enumerate}
+    \item Cada caixote tem que ter uma célula de carga, que, dependendo da carga a que se destina, custa cerca de $\SI{30}{\euro/unidade}$ a preço de fábrica, o que aumenta o custo de um caixote do lixo de $\SI{100}{\liter}$ para mais do dobro (sem contar com o \textit{chip} que efetua as leituras).
+    \item Cada caixote do lixo, mesmo os mais pequenos, deve ter uma bateria, o que dá origem a vários problemas:
+    \begin{enumerate}
+        \item Utilização excessiva de baterias com impacto ambiental correspondente;
+        \item Necessidade de carregamento/substituição; a empresa refere que as baterias podem ser carregadas pelo camião do lixo, o que se antecipa bastante complicado porque as alternativas não se apresentam como particularmente interessantes:
+        \begin{enumerate}
+            \item O camião fazer uma ligação elétrica física à bateria, o que é inviável dadas as condições duras de utilização dos caixotes, que podem danificar os interfaces, assim como a dificuldade de alinhar interfaces elétricos num processo que se deseja o mais rápido possível para sujeitar os lixeiros ao menor tempo possível na rua (quase sempre desabrigados) e em contacto com o lixo. 
+            \item Realizar o carregamento por indução eletromagnética, que se sabe ser relativamente demoroso no caso de baterias, dado que (a título de exemplo) uma pilha de relógio fornece $\SI{35}{\milli \ampere \hour}$ de carga a $\SI{1.55}{\volt}$, o que equivale a $\SI{0.05425}{\watt \hour} = \SI{195.3}{\joule}$ de energia, e os mais avançados carregadores de telemóveis sem fios conseguem fornecer até $\SI{10}{\watt}$, o que implicava pelo menos $\SI{20}{\second}$ para carregar a bateria. Tudo isto assumindo que a bateria é recarregável e que suporta ser carregada a $\SI{10}{\watt}$ (os carregadores de pilhas domésticos costumam carregar pilhas AA a $\SI{600}{\milli \ampere}$, o que equivale a cerca de $\SI{0.9}{\watt}$ para uma pilha AA de $\SI{1.5}{\volt}$), e que o \textit{chip} no caixote não é danificado por um campo eletromagnético tão forte.
+        \end{enumerate}
+    \item Nenhuma desta tecnologia dispensa mesmo assim a instalação de dispositivos adicionais nos camiões, incluindo células de carga no braço elevador ou no compartimento de carga.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{MOBA}
+
+A Mobile Automation (MOBA) é uma empresa alemã de tecnologia para maquinaria pesada em indústria, cediada em Limburg an der Lahn, Hesse. A MOBA possui 14 subsidiárias e tem presença em 13 países da América, Europa e Ásia/Oceânia, assim como dezenas de revendedores, incluindo em Portugal.
+
+A MOBA fornece soluções principalmente nas áreas da construção de estradas, movimentação de terra, gruas e gestão de resíduos, sendo esta última a que nos importa. Nessa área, são oferecidos produtos de pesagem móvel, identificação via rádio e medição de nível de enchimento de contentores, e serviços de gestão de rotas e armazenamento na nuvem. Esta empresa fornece portanto um sistema integrado de gestão de resíduos, tratando-se essencialmente disso: um sistema de gestão de resíduos. Esse foco excessivo na entidade gestora é positivo para a própria entidade, mas torna difícil para os cidadãos compreender os ganhos subjacentes, além da ênfase numa abordagem punitiva (poluidor-pagador) aparentemente apoiada na ideia de que os contentores do lixo recolhem todo o tipo de lixo sem separação, em vez de promover a redução do lixo gerado em primeiro lugar, a separação e reciclagem do lixo, e o retorno financeiro para os cidadãos.
+
+\subsection{Projeto Orgânico (Porto)}
+
+O Projeto Orgânico é um projeto do município do Porto (operacionalizado pela Porto Ambiente) com o objetivo de promover a separação de resíduos orgânicos em casa \cite{organico-home}. Este projeto foi lançado a 22 de abril de 2021, abrangendo cerca de 60\% dos habitantes da cidade do Porto \cite{organico-news}, e consiste na distribuição voluntária de baldes de lixo de $\SI{5}{\liter}$ a cada residência, que devem ser usados para separação dos resíduos orgânicos em casa; o balde deve ser posteriormente despejado pelo residente num contentor especial para resíduos orgânicos num ecoponto, usando um cartão para se identificar e abrir o contentor.
+
+Este projeto é um bom ponto de partida e avança uma ideia interessante: considerar um novo tipo de resíduos, os orgânicos, que podem ser muito facilmente aproveitados como composto orgânico se forem corretamente separados do lixo indiferenciado (o que implica que não podem ser colocados no contentor de resíduos orgânicos sacos de lixo de plástico contendo resíduos orgânicos dado que o plástico polui o composto, logo o balde do lixo deve ser transportado desde a residência até ao ecoponto e ser diretamente despejado para o contentor).
+
+No entanto, existem alguns problemas e omissões:
+
+\begin{enumerate}
+
+    \item Não pode ser contabilizada a produção de lixo orgânico para distribuição de incentivos, dado que, apesar de ser necessário um cartão para abrir um contentor de lixo orgânico, não é indicada a presença de algum método de medição da quantidade de resíduos depositados por cada indivíduo nesse contentor, nem é possível extrapolar que residências/estabelecimentos utilizam esse contentor (até porque cada pessoa que pretenda depositar resíduos orgânicos pode fazê-lo num contentor qualquer), nem sequer tentar alterar a taxa de resíduos para todos os residentes e estabelecimentos nessa zona dado que se espera, por exemplo, que estabelecimentos de restauração produzam uma quantidade muito maior de resíduos orgânicos do que uma residência.
+
+    \item As pessoas não podem receber incentivos, dado que não é possível contabilizar a produção de lixo orgânico; o único incentivo é o de saberem (se sequer souberem ou quiserem saber) que a empresa municipal de gestão de resíduos será capaz de produzir um composto orgânico que produz receitas dos quais os residentes nunca beneficiarão diretamente, se é que alguma vez beneficiarão.
+
+    \item A ausência de incentivo nem punição para contribuir para a separação correta dos resíduos orgânicos compromete a qualidade do composto orgânico a ser produzido, dada a seguinte análise empírica e simples sobre o comportamento das pessoas:
+    \begin{enumerate}
+        \item Se os outros contentores estiverem cheios, há um impulso para as pessoas depositarem os resíduos nos locais incorretos. Se os contentores de plástico, vidro, papel ou orgânicos estiverem cheios, as pessoas costumam depositar os resíduos no contentor do lixo indiferenciado; mas se este contentor estiver cheio, é fácil de imaginar que as pessoas depositem os resíduos no contentor que parece mais adequado, que deverá ser o de resíduos orgânicos por ser mais parecido com o de resíduos indiferenciados à primeira vista.
+        \item Por hábito ou por facilidade de transporte, alguns residentes continuarão a usar sacos de plástico para transportar resíduos orgânicos; é muito comum cobrir o interior do balde para evitar lavar o balde do lixo tão frequentemente, apesar da indicação de que os baldes são facilmente laváveis numa máquina de lavar a loiça e que devem ser diretamente despejados para o contentor respetivo.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{Recicle Mais, Pague Menos (Maia)}
+
+Em 2012, o município da Maia, através da empresa municipal de gestão de resíduos Maiambiente, e em conjunto com a LIPOR, começou a implementar o projeto "Ecoponto em Casa", com a distribuição de caixotes de lixo com identificadores eletrónicos a quase todas as residências individuais do município \cite{ecopontoemcasa-primeiramao, rmpm-noticiasmaia, rmpm-primeiramao}. Este projeto recebeu grande atenção de outros municípios vizinhos, em Portugal e mesmo na União Europeia \cite{rm-ue}.
+
+Em 3 de maio de 2021, a Câmara Municipal da Maia deu início ao projeto "Recicle Mais, Pague Menos" (R+P-), que, apoiado no projeto anterior, possibilitará a implementação do princípio do poluidor-pagador, que, ao fim das três fases, irá a partir de 2024 contribuir para o cálculo da taxa de resíduos sólidos urbanos para cada residência individual em função do número de vezes que os caixotes são esvaziados pelos camiões de lixo \cite{rmpm-primeiramao}, assumindo-se que a recolha de outros resíduos é gratuíta.
+
+Este é o primeiro projeto de \textit{pay-as-you-throw} em larga escala em Portugal, mas não sem alguns problemas óbvios:
+
+\begin{enumerate}
+    \item Contempla apenas recolha ao domicílio, ignorando residentes de apartamentos ou condomínios em grandes centros e ecopontos.
+
+    \item A contabilização dos resíduos gerados pelo número de recolhas de resíduos indiferenciados não é justa, pois alguns resíduos possuem a mesma massa (logo, possuem a mesma quantidade de matéria-prima revalorizável) mas diferentes volumes, sendo que dois caixotes com o mesmo volume de resíduos de diferentes densidades são tributados da mesma forma apesar de um deles poder ter resíduos mais densos, e logo com mais valor. Assim, nem sequer faz sentido tentar estimar o peso em lixo que um caixote de lixo indiferenciado cheio contém.
+    \item São promovidos hábitos pouco saudáveis, como:
+    \begin{enumerate}
+        \item A acumulação de resíduos durante longos períodos no caso de residências onde são produzidos poucos recursos, sendo pouco higiénico manter lixo durante muito tempo dentro de casa, mesmo que em pequenas quantidades.
+        \item Um esforço de comprimir os resíduos de forma a caber maior quantidade no mesmo caixote, o que pode provocar dificuldade a esvaziar o caixote por os resíduos estarem comprimidos e endurecidos (ficam "colados" ao caixote) e a movimentar um caixote pesado.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection{PAYT (Guimarães)}
+
+Em abril de 2016, a VITRUS iniciou a implementação de um projeto PAYT no centro histórico da cidade de Guimarães, abrangendo cerca de 1500 pessoas. Este projeto consiste na distribuição de sacos de lixo de plástico certificados pela VITRUS com capacidades de $\SI{15}{\liter}$, $\SI{30}{\liter}$, $\SI{50}{\liter}$ e $\SI{100}{\liter}$, e só são recolhidos resíduos indiferenciados nessa zona da cidade se estiverem dentro destes sacos certificados. Isto significa que as pessoas pagam pelo lixo que produzem quando compram os sacos, dado que apenas são recolhidos os sacos certificados e vendidos pela VITRUS \cite{guimaraes-payt}. Os restantes resíduos são recolhidos gratuitamente.
+
+Este projeto padece de alguns dos problemas do sistema a ser implementado na Maia; nomeadamente, partilha do problema de não serem contabilizados os outros resíduos, e do volume dos resíduos indiferenciados. Além disso, possui vários problemas adicionais relacionados com os sacos de lixo:
+
+\begin{enumerate}
+    \item Ao exigir que se usem sacos plásticos para conter os resíduos indiferenciados, está-se a promover o consumo regular de plásticos de utilização única;
+    \item O problema de promoção de hábitos que comprometem a saúde pública no caso da Maia também se extende a este projeto, dado que a utilização de sacos em vez de caixotes do lixo pode contribuir para uma perceção pública de que apenas é necessário sacos de lixo para conter os resíduos indiferenciados e levar as pessoas a dispensar de usar caixotes de lixo, levando ao amontoamento de sacos de lixo na rua em vez de estarem adequadamente guardados num caixote/contentor (mesmo que o projeto indique que só se deve colocar os sacos na rua $\SI{10}{\minute}$ antes da recolha, é óbvio que nem toda a gente vai fazer isso, e vão simplesmente colocar os sacos na rua assim que ficarem cheios para evitar que ocupem espaço dentro da residência/estabelecimento e que libertem maus odores em espaços fechados), o que pode ter consequências em dois aspetos:
+    \begin{itemize}
+        \item Afetar a perceção de higiene pública;
+        \item Ao estarem mais expostos a condições climatéricas e à natureza, os sacos podem romper e libertar odores e líquidos escorridos, assim como dar origem a roubo de lixo e a atração de animais que se alimentem deste tipo de resíduos (ratos, gaivotas, etc.).
+    \end{itemize}
+    \item O facto de o pagamento ser feito por saco significa que as pessoas se sentem incentivadas a apenas livrarem-se deles quando estiverem cheios, o que origina mais uma vez o problema de acumulação de resíduos indiferenciados nas residências durante longos períodos.
+    \item Além disso, as pessoas tentam assim colocar a maior quantidade de resíduos indiferenciados possível no mesmo saco, ultrapassando os limites estabelecidos para esses sacos, aumentando a dificuldade de manuseamento para os lixeiros e a probabilidade de rotura durante o manuseamento ou enquanto aguardam recolha.
+\end{enumerate}
+
+\newpage
+
+\section{Análise SWOT}
+
+Apresenta-se a seguir a análise SWOT deste projeto, de forma a sumariamente descrever os fatores internos mais importantes a ter em conta durante a sua implementação, e o ambiente em que este projeto atuará.
+
+\begin{center}
+    \begin{tabular}{c l @{}}
+        \cellcolor{strengthgreen!80 }\color{white}{\Large\textbf{Strengths}} &
+            \begin{minipage}{122mm}\vspace{0.4em}\begin{itemize}\itemsep0em
+                \item O sistema que propomos é abrangente, ou seja, prevê soluções para todas as situações de recolha de resíduos e todos os casos de uso
+                \item A contabilização dos resíduos gerados é justa.
+                \item A solução proposta é tão complexa e dispendiosa quanto estritamente necessário.
+            \end{itemize}\vspace{0.0em}\end{minipage} \\
+        \cellcolor{red!80   }\color{white}{\Large\textbf{Weaknesses}} & 
+            \begin{minipage}{122mm}\vspace{0.4em}\begin{itemize}\itemsep0em
+                \item Grande financiamento à cabeça para desenvolver a aplicação móvel/web app e para a encomenda inicial e adaptação de caixotes do lixo.
+                \item No início a empresa que implemente este projeto terá pouca liquidez, mas os valores das transações serão muito grandes (encomenda de caixotes por grosso, instalação do sistema, etc.). Uma empresa com receitas e despesas de ordens de magnitude muito superiores à sua liquidez (mesmo que equilibradas no instante presente) possui grande risco de desequilíbrio orçamental com pequenas alterações nas receitas ou despesas.
+            \end{itemize}\vspace{0.0em}\end{minipage} \\
+        \cellcolor{blue!80  }\color{white}{\Large\textbf{Opportunities}} &
+            \begin{minipage}{122mm}\vspace{0.4em}\begin{itemize}\itemsep0em
+                \item Maior consciência ambiental das pessoas.
+                \item Vontade da sociedade e dos decisores políticos de promoção de uma economia ecológica, sustentável e amiga do ambiente.
+                \item Legislação que fornece enquadramento legal e orientações relativas à implementação de sistemas inteligentes de gestão de resíduos urbanos que apliquem o princípio do poluidor-pagador.
+                \item Financiamento nacional e europeu através de fundos nacionais e europeus, especialmente dado o atual contexto de promoção do investimento numa fase de recuperação económica pós-pandemia COVID-19.
+            \end{itemize}\vspace{0.0em}\end{minipage} \\
+        \cellcolor{orange!80}\color{white}{\Large\textbf{Threats}} &
+            \begin{minipage}{122mm}\vspace{0.4em}\begin{itemize}\itemsep0em
+                \item Problemas com atrasos no fornecimento (que se traduz em pagamentos efetuados por bens que a empresa ainda não possui fisicamente, com perda de liquidez sem bens para transacionar) dada a recessão económica e a quebra das cadeias de fornecimento provocada pela pandemia COVID-19.
+                \item Atrasos nos pagamentos por parte das entidades gestoras, não só pelos motivos habituais mas também pelo desvio de fundos para outras medidas devido ao atual contexto económico (por exemplo, uma câmara municipal pode contratualizar um serviço a esta empresa, e decidir entretanto reduzir os fundos para essa contratualização para os mover para apoio emergencial a empresas municipais ou ao tecido empresarial do município).
+            \end{itemize}\vspace{0.0em}\end{minipage}
+    \end{tabular}
+\end{center}
+
+\chapter{Modelo de negócio}
+
+\section{Análise de custos}
+
+Os recursos a nível material, financeiro e humano necessários serão alvo de avaliação contínua, uma vez que estão diretamente relacionados com a escala a que o projeto se encontra. Contudo, haverá elementos que, embora possam variar em termos da sua relevância, serão uma constante a ter em conta.
+
+De uma perspetiva mais geral consideramos que um espaço físico amplo de trabalho traria mais desvantagens (na forma de custos monetários) do que vantagens, pelo que achamos que a melhor opção seria um pequeno escritório com a função principal de residência fiscal, o que representa um encargo de $\SI{500}{\euro}$/mês.
+Para além disto, a nível dos recursos humanos que estejam ligados à empresa e não diretamente ao serviço/produto que oferecemos, apenas esperamos que seja relevante a contratação de um serviço de avença com um escritório de advogados que nos garanta acompanhamento jurídico, o que acarreta um custo de aproximadamente $\SI{250}{\euro}$/mês e uma avença contabilística (um extra correspondente a mais $\SI{250}{\euro}$/mês). Eventuais processos a tratar em tribunal poderão implicar, previsivelmente, uma despesa adicional com custas judiciais no valor de $\SI{1000}{\euro}$/ano.
+
+No que diz respeito ao produto em concreto, mais especificamente à aplicação web, a nível físico existe a necessidade de um servidor (\textit{server}) com um sistema centralizado instalado para garantir o acesso permanente (24h/dia e 365 dias/ano) à web app, guardando e mantendo disponível a informação disponível aos seus utilizadores - de que é exemplo a quantidade de lixo depositado, as pessoas associadas a cada habitação, e a próxima data de recolha (se aplicável). Este servidor com o sistema centralizado seria fornecido à entidade gestora (o que representaria um custo próximo dos \SIrange{2000}{3000}{\euro} cada), ou, em alternativa, se esta já possuísse um dispositivo capaz, este seria configurado devidamente, existindo neste último caso menos garantias relacionadas com a fiabilidade do mesmo.
+
+Em relação à aplicação/sistema centralizado em si, esta implica custos fixos. Idealizamos uma aplicação de complexidade média-baixa, com uma interface polida, sistema de registo e login, domínio customizado, dashboard (painel de controlo), activity feed, integração de geolocalização com mapa incorporado, páginas de análise do tráfego, performance e falhas que eventualmente ocorram. Um ponto de foco é também a vertente da segurança de utilização recorrendo-se a um certificado SSL (que permite uma conexão encriptada entre a aplicação e o servidor web) e proteção contra outro tipo de ataques, de que são exemplo os ataques de negação de serviço, mais conhecidos por Denial-of-Service (DoS). Uma estimativa do desenvolvimento desta aplicação/sistema centralizado seria à volta dos $\SI{27000}{\euro}$ tendo a duração de 12 semanas, para uma equipa de 5 desenvolvedores de \textit{software} e de um desenvolvedor de UI/UX (interface/experiência do utilizador). Uma vez que o grupo de trabalho é da área da engenharia informática, apenas seria necessário procurar um designer. Em termos monetários, estamos a falar de $\SI{1400}{\euro}$/mês para cada um dos developers, a que acresce um valor que ronda os $\SI{1300}{\euro}$/mês para o designer durante as 12 semanas de desenvolvimento, existindo a possibilidade de, em caso necessidade, estender a existência desta última posição até um futuro mais distante. Os encargos destinados aos desenvolvedores diminuirão ao longo do tempo em resultado da diminuição da carga de trabalho (que eventualmente se resumirá à manutenção da aplicação), fixando-se nos $\SI{400}{\euro}$/mês.
+
+Com a aplicação pronta torna-se necessário colocá-la accessível ao público. Uma possibilidade que não acarreta custos extra será disponibilizar o ficheiro APK no domínio web do projeto, podendo o utilizador descarregar para o seu telemóvel a aplicação. Contudo, este meio não é o mais eficaz para alcançar uma vasta parte da população, sendo necessário para o efeito o pagamento das devidas taxas às duas grandes empresas que possuem o monopólio de distribuição de aplicações móveis: Google e Apple. No caso da primeira, para ser possível colocar uma aplicação na Google Play Store é obrigatório o pagamento de uma taxa única de 25 dólares aquando de criação de uma conta Google Play Developer. Por sua vez, a Apple exige um pagamento anual de 99 dólares para permanecer no Apple Developer Program, ou seja, ter o direito de poder colocar a aplicação na loja online.
+
+Voltando a atenção para os cartões alternativos à aplicação e para os caixotes do lixo a serem distribuídos pelos cidadãos, estes teriam a intervenção de empresas subcontratadas por nós. Em primeiro lugar, a produção de cartões corresponde a perto de $\SI{1}{\euro}$/cartão, variando bastante o preço da unidade consoante o tamanho da encomenda. Em segundo, para a produção de caixotes com os requisitos necessários, ou seja, um para cada tipo de lixo da respetiva cor e com uma etiqueta rádio identificadora do próprio caixote, a matéria-prima escolhida será um plástico do tipo HDPE (\textit{High-Density Popyethylene}), devido à sua resistência a variações de temperatura, impactos e substâncias químicas, características de grande relevo num produto deste género. O preço de mercado deste recurso encontra-se perto dos $\SI{0.85}{\euro/\kilogram}$ pelo que, tendo como modelo um peso médio de $\SI{5}{\kilogram}$ para cada caixote doméstico, uma estimativa plausível seria um custo de $\SI{4.25}{\euro}$ por caixote ao qual acrescia o valor da etiqueta NFC que é $\SI{0.25}{\euro}$.
+Tendo em conta a logística necessária para a produção e posterior distribuição acreditamos que as despesas finais seriam na ordem dos $\SI{15}{\euro/caixote}$ (ou seja, $\SI{60}{\euro}$ assumindo o conjunto dos quatro tipos de lixo: papel, plástico, vidro, orgânico), podendo este valor por unidade vir a descer mediante a dimensão das encomendas.
+Em relação aos contentores, uma célula de carga ronda os $\SI{125}{\euro}$ pelo que um custo plausível de atualização de um contentor seria perto dos $\SI{150}{\euro}$.
+
+\section{Análise de rendimentos}
+
+De forma resumida, no que toca aos rendimentos, estes estão divididos essencialmente em dois conjuntos: únicos e periódicos/passivos. No grupo das receitas únicas incluem-se a venda de caixotes e possível financiamento de fundos nacionais e/ou europeus. Por sua vez, as receitas resultantes de taxas paga pelas câmaras (periodicamente), correspondem aos rendimentos passivos.
+
+Adquiridos entre \SIrange{10}{15}{\euro} por unidade (dependendo da escala da encomenda), os caixotes serão fornecidos aos municípios a $\SI{20}{\euro}$ a unidade, constituindo esta a principal fonte de rendimento, assumindo um cenário não tão otimista em que uma candidatura para programas de financiamento (de que foi exemplo o programa PO SEUR -- Programa Operacional para a Sustentabilidade e Eficiente Uso dos Recursos 2014-2020) seja rejeitada. Caso uma eventual candidatura a um projeto similar seja aprovada, estima-se uma verba de capital entre os \SIrange{50000}{100000}{\euro} que cobririam em grande maioria os encargos associados ao primeiro ano de operação, acelerando significativamente a chegada ao chamado \textit{break even point}, a partir do qual os custos deixam de exceder as receitas.
+O pagamento anual da licença por parte de cada entidade gestora (município) para uso do sistema centralizado no valor de $\SI{5000}{\euro}$ anuais a que acresce uma taxa de $\SI{1}{\euro}$ por cada caixote que se encontrasse no terreno corresponde a uma fluxo monetário com grande potencial de crescimento que viabiliza a sustentabilidade do negócio a longo prazo.
+
+\section{Análise de lucros}
+
+O balanço final previsto para cada ano e com especial destaque para o primeiro é um ponto com bastantes 'se's . Um primeiro ano positivo resultante de um conseguido financiamento, não implica que dois anos depois já terá sido alçando o \textit{break even point}, apesar de ser um aspeto promissor para que aconteça. Não nos podemos esquecer de que o futuro é um mar de incertezas, mesmo que pensemos que o conseguimos prever com base em situações idênticas que tenham ocorrido no passado. Por esta razão, decidimos considerar 3 diferentes cenários.
+
+Num primeiro cenário - considerado otimista - conseguir-se-ia um financiamento de $\SI{100 000}{\euro}$, o que permitiria terminar o primeiro ano de uma forma neutra em termos financeiros, já tendo em "atividade" uma amostra de 1000 caixotes que funcionariam como uma forma de uma câmara testar concretamente o impacto do projeto no terreno. O segundo traria prejuízos estimados de $\SI{26000}{\euro}$, mas o número de unidades distribuídas estaria na casa dos $\SI{5000}{\euro}$ em resultado de uma fase de testagem bem sucedida, sendo o \textit{break even point} alcançado, e logo no ano seguinte atingir-se-ia pela primeira vez um balanço anual positivo com números a rondar os $\SI{35000}{\euro}$ de lucro ou \SIrange{15000}{20000}{\euro} se tivermos em conta o acumulado dos anos anteriores. Nos anos seguintes continuar-se-ia a aumentar o número de caixotes em utilização e no quinto ano, as previsões apontam para que as taxas pagas pelo(s) município(s) sejam já suficientes para suportar os custos anuais, ou seja, se ocorresse algum percalço e não fossem vendidas mais unidades, continuaria a ser sustentável.
+Voltando-nos agora para um cenário mais neutro, no qual o financiamento é igualmente conseguido mas num valor correspondente à metade do anteriormente referido (i.e. $\SI{50000}{\euro}$ em vez de $\SI{100000}{\euro}$) e o número de caixotes que é vendido é ligeiramente inferior em cada ano, resultante de limitações de produção, o lucro acumulado só viria a corresponder a um valor positivo durante o quarto ano de operações.
+Por último, um cenário mais pessimista que os anteriores, no qual não é conseguido financiamento e o número de caixotes que é vendido é bastante inferior em resultado, por exemplo, de uma densidade populacional baixa das regiões aderentes e de problemas na linha de produção de caixotes, sugere uma estimativa em que o retorno do investimento chega apenas durante o quinto ano, ou seja, bastante atrasado comparado com os outros cenários apresentados.
+
+Consultar gráficos no anexo \ref{ch:anexo-custos}.
+
+\chapter{Plano de ação}
+
+O desenvolvimento do projeto apresentado está divido nas seguintes fases:
+
+\begin{enumerate}
+    \itemsep0em
+    \item Formação da equipa;
+    \item Desenvolvimento do protótipo da app;
+    \item Reuniões com fornecedores;
+    \item Reuniões com as câmaras para apresentação do projeto;
+    \item Obtenção de financiamento;
+    \item Desenvolvimento da aplicação e produção dos caixotes;
+    \item Marketing;   
+    \item Fase de teste;
+    \item Extensão do sistema a todos os municípios interessados;
+    \item Manutenção;
+\end{enumerate}
+
+Passemos então à explicitação do trabalho a ser realizado e do tempo que vai ser dispendido em cada uma destas fases.
+
+\section{Formação da equipa}
+
+Para que o desenvolvimento do projeto possa começar, necessitamos de formar uma equipa constituída por seis elementos. Destes seis elementos, cinco serão desenvolvedores de \textit{software} e um será designer de UI/UX. Durante esta fase, iremos adicionalmente realizar uma análise prospetiva de serviços de advocacia e contabilidade que poderemos contratar. Esta fase terá uma duração aproximada de um mês.
+
+\section{Desenvolvimento do protótipo da aplicação}
+
+O segundo passo no desenrolar do projeto é a escrita de \textit{user stories} que nos irão guiar no desenvolvimento da aplicação, bem como de um protótipo desta. Com o protótipo desenvolvido, será possível ter uma ideia inicial da interface das principais páginas da aplicação e a forma como se relacionam entre si.
+
+As \textit{user stories} que vão sendo desenvolvidas não só nesta fase, mas ao longo de todo o desenvolvimento, contribuem para que o produto final garanta sempre ao utilizador final a melhor experiência possível, próxima daquilo que pretende. Na verdade, a escrita de \textit{user stories} não termina com o lançamento da aplicação, pois os utilizadores da aplicação enviam constantemente \textit{feedback} sobre a sua experiência ao utilizarem a aplicação, pelo que surgem sempre novas \textit{user stories} para implementar. Por outro lado, serão adicionadas novas funcionalidades ao longo do tempo para que o utilizador possa ter acesso a novas secções na aplicação e melhorar a sua experiência.
+
+Esta fase será desenvolvida conjuntamente entre a equipa de desenvolvedores e o designer de UI/UX, de forma a que as páginas obtidas tenham um design apelativo, funcional e próximo daquilo que se pretende obter na versão final da aplicação.
+
+Prevê-se que esta fase de criação do protótipo da aplicação durará cerca de dois meses.
+
+\section{Reuniões com fornecedores}
+
+Nesta fase, iremos reunir com várias empresas que produzem caixotes do lixo e equipamentos de medição para discutir prazos, materiais utilizados, forma de implementar os sensores necessários ao funcionamento do nosso sistema e preços de produção dos caixotes.
+Desta forma, vamos poder fazer uma análise dos vários orçamentos tendo em conta os vários critérios apresentados no parágrafo anterior e optar por aquele que seja mais favorável.
+
+Esta fase durará cerca de dois meses.
+
+\section{Reuniões com entidades gestoras para apresentação do projeto}
+
+Tendo a nossa ideia organizada de uma forma clara, após analisados os prós e os contras, possuindo já um modelo inicial da aplicação e estudados os custos, avançamos então para a apresentação do nosso projeto a diversas entidades gestoras.
+
+Nesta reunião, iremos apresentar o nosso projeto, assim como as motivações em que nos baseamos para o fundar, passando também pela forma como este irá ser implementado, a forma como funciona e os custos associados para adoção e manutenção do sistema. Nesta apresentação, também iremos recorrer aos protótipos tanto dos contentores como da aplicação para auxiliar a explicação do funcionamento do nosso sistema e assim tentar ajudar a cativar as câmaras para adotarem o nosso projeto.
+
+Estes encontros com as câmaras também servirão para obtermos novas sugestões que possam ajudar a melhorar o funcionamento do nosso sistema, tornando-o mais acessível para os cidadãos o utilizarem e terem a melhor experiência possível.
+
+A duração desta fase será aproximadamente dois meses e poderá decorrer de forma parcialmente sobreposta com a fase anterior, apesar de considerarmos importante iniciar contatos com os fornecedores antes de realizar as primeiras reuniões com entidades gestoras. 
+
+\section{Obtenção de financiamento}
+
+Após a discussão do projeto com várias entidades gestoras (clientes) e com as empresas (fornecedores), é necessário começar a obter o financiamento necessário para iniciar a implementação do projeto, quer seja para encomendar os caixotes, para avançar com o desenvolvimento da aplicação ou para divulgar o sistema através de publicidade nas ruas, nos meios de comunicação social, entre outros.
+
+Existem várias possibilidades para obter o financiamento desejado, como:
+
+\begin{itemize}
+    \itemsep0em
+    \item \textit{Crowdfoundings}, "vendendo"{} a ideia ao público para atrair possíveis doações/investidores;
+    \item Candidatura a programas de financiamento;
+    \item Obtenção de empréstimos junto da banca;
+    \item Contactar possíveis patrocinadores que possam estar interessados em financiar o nosso projeto em troca de publicidade tanto na aplicação como nos próprios contentores que serão distribuídos pelas casas;
+    \item Capital de risco, ou seja, sociedades de capital de risco, fundos de capital de risco ou \textit{business angels}, que financiam empresas através de uma participação no capital destas (por exemplo, realizando um aumento de capital), apoiando-as no seu desenvolvimento e crescimento. A participação destas entidades no capital das empresas é temporária (entre três a sete anos) e normalmente têm uma posição minoritária.
+\end{itemize}
+
+Esta fase deve ser iniciada assim que o projeto for iniciado, mas deve estar absolutamente concluída antes de avançarmos para a próxima fase, dado que é um fator decisivo no sucesso deste projeto. Se as condições de financiamento não estiverem satisfeitas até ao fim da fase anterior, o projeto deverá desenvolver apenas esforços de obtenção de financiamento durante pelo menos seis meses ou até atingir o financiamento necessário.
+
+\section{Desenvolvimento da aplicação e encomenda dos caixotes}
+
+Com a obtenção do financiamento desejado e depois de estudar todas as sugestões apresentadas pelas entidades gestoras aquando das reuniões, chega o momento de avançar com o desenvolvimento do projeto.
+
+Encontrados os profissionais necessários para o desenvolvimento da aplicação, e partindo dos protótipos já desenvolvidos anteriormente, podemos começar a implementar a aplicação que vai servir de apoio ao sistema implementado.
+
+Nesta fase são também realizadas as encomendas dos primeiros caixotes que serão distribuídos posteriormente na fase de teste, assim como se procederá à adaptação de pelo menos um camião de recolha dos resíduos com os sensores necessários para que possam pesar e efetuar a leitura das etiquetas dos contentores.
+
+Esta fase levará cerca de quatro a seis meses até estar concluída, sendo a subfase de adaptação dos caixotes e teste em ambiente fechado a que pode conduzir a maiores atrasos.
+
+\section{Marketing}
+
+Depois de estarem estabelecidos os acordos com as entidades gestoras e de termos obtido o financiamento necessário que permitiu avançar com a encomenda dos primeiros caixotes e com o desenvolvimento da aplicação, é chegado o momento de avançar com a divulgação do projeto para sensibilizar as pessoas para o tema da reciclagem e para as cativar para o sistema que vamos implementar. 
+
+Iremos conduzir uma fase de marketing intensivo durante uma semana a um mês em conjunto com as entidades gestoras e comunicação social local/nacional. Esta fase continuará a decorrer durante o resto da duração do projeto.
+
+\section{Fase de testes}
+
+Após a implementação da aplicação estar concluída, dos contentores estarem produzidos e as pessoas devidamente informadas sobre os objetivos e funcionamento do sistema, chega o momento de iniciar a fase de testes do produto final. Para isso, escolhe-se uma ou duas regiões (por exemplo, concelhos) que estejam interessados em receber a fase de testes do projeto.
+
+As entidades gestoras compram alguns caixotes que serão distribuídos pelas habitações de certas zonas desses concelhos onde irão ser efetuados os testes. Quando os caixotes forem distribuídos, será também entregue, por cada habitação, um código que será utilizado para se aceder à conta através da aplicação, até 2 cartões com etiqueta NFC para se abrir os ecopontos na ausência da aplicação, assim como panfletos que ajudarão as pessoas a saber em que contentor colocar os resíduos.
+
+O objetivo desta fase é analisar como é que o projeto funciona quando é aplicado a pequenas zonas habitacionais e de comércio, de forma a podermos corrigir possíveis problemas que surjam tanto no sistema de recolha como na aplicação, antes de expandirmos para a área total dos concelhos.
+
+A duração desta fase estará compreendida entre seis a doze meses, dependendo da opção de cada entidade gestora.
+
+\section{Extensão do sistema a todas as pessoas}
+
+Realizados os testes e feitas as adaptações necessárias, é chegado o momento de expandirmos este sistema de recolha e gestão de resíduos a todas as entidades gestoras interessadas, na totalidade da área que servem. Para isso, as entidades gestoras terão de adquirir a quantidade de contentores necessária para distribuírem por todas as habitações, assim como adaptar mais camiões de recolha dos diversos tipos de resíduos.
+
+A duração desta fase depende do empenho e celeridade com que as entidades gestoras estiverem dispostas a aplicar na ampliação do projeto (incluindo pagamento de serviços prestados e bens adquiridos à nossa empresa), pelo que a fase de extensão deverá demorar entre um a dois anos.
+
+\section{Manutenção}
+
+Após o projeto estar implementado, é necessário que, para garantir a longevidade do mesmo, seja efetuada alguma manutenção. Esta manutenção pode ser feita tanto a nível da aplicação, de modo a que o utilizador possa ter sempre a melhor experiência possível, como a nível dos contentores individuais/coletivos ou ecopontos que se possam danificar.
+
+Esta fase decorrerá enquanto o projeto existir e o sistema estiver a ser utilizado em alguma zona.
+
+\chapter{Conclusão}
+
+O objetivo deste projeto é a implementação de um sistema de poluidor-pagador, que recompense quem produz menos resíduos e quem melhor separa os resíduos. Considera-se que o presente projeto consegue atingir totalmente este objetivo fundamental, ao permitir quantificar o lixo produzido por cada pessoa numa determinada zona, e aplicar uma fatura por gestão de resíduos com valor proporcional ao impacto ambiental do lixo produzido e ao valor que possa ter.
+
+Realizamos uma pesquisa bibliográfica extensiva de forma a determinar as tecnologias mais adequadas ao nosso objetivo, assim como estudar projetos semelhantes, para desta forma replicarmos alguns conceitos interessantes e identificarmos/corrigirmos alguns dos problemas de soluções existentes.
+
+Para desenvolver o projeto de forma verdadeiramente inovadora, este foi desenvolvido em etapas incrementais, onde foi tomando cada vez mais forma, até chegar a um produto verdadeiramente completo e inovador. Para isso realizou-se muita pesquisa e discussão entre os integrantes, desenvolvendo-se em cada um destes as capacidades necessárias para realização de projetos deste nível.
+
+As várias reuniões realizadas em equipa assim como os \textit{briefings} destrutivos durante as aulas teórico-práticas ao longo do semestre e o inquérito enviado a todos os alunos da comunidade FEUP contribuíram para a aprimoração de ideias de forma a obtermos um projeto final sólido.
+
 \nocite{*}
 \bibliographystyle{acm}
 \clearpage
