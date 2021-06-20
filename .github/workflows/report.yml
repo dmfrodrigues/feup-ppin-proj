@@ -27,7 +27,7 @@ jobs:
     - name: report1
       run: |
         cd report
-        latexmk -f -pdf main.tex
+        latexmk --shell-escape main.tex -pdf
 
     - name: Upload report
       uses: actions/upload-artifact@v2
