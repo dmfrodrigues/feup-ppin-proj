@@ -14,7 +14,7 @@ jobs:
 
     - name: Install LaTeX and dependencies
       run: |
-        supo apt update
+        sudo apt update
         sudo apt install -y texlive-latex-extra texlive-science texlive-lang-portuguese latexmk curl inkscape
 
     - name: Checkout submodules
