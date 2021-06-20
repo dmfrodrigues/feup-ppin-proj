@@ -364,6 +364,60 @@ Um código QR é um tipo de código de barras bidimensional que permite guardar 
 
 Este tipo de código é amplamente utilizado, dada a quantidade significativa de informação que consegue guardar, a sua facilidade de criação e leitura (qualquer telemóvel consegue capturar um código e processá-lo), assim como o vasto número de implementações deste algoritmo sobre a forma de aplicações móveis.
 
+\subsection{Pesagem de lixo a bordo}
+
+A forma mais direta de quantificar os resíduos urbanos gerados pelas pessoas é a medição da sua massa. Por este motivo, as tecnologias de pesagem de lixo a bordo do camião têm vindo a crescer em popularidade por permitirem às entidades gestoras melhor determinar as rotas de recolha para reduzir os custos de operação da sua frota. Muitas entidades gestoras já utilizam este género de tecnologias, mas a maior parte não os anuncia por não ter grande utilidade às pessoas ou por uma certa percepção de monitorização exagerada dos hábitos de consumo.
+
+A pesagem pode ser efetuada usando uma célula de carga com um extensómetro para medir a amplitude da deformação da célula de carga, que permite medir com grande precisão o peso de um determinado objeto de forma eletrónica. Um extensómetro é uma peça composta essencialmente por um fio em zigue-zague que, quando o seu comprimento é alterado na direção predominante do fio, provoca uma pequena alteração no comprimento do fio, e consequentemente na sua resistência elétrica, que pode ser medida de forma muito precisa.
+
+\begin{figure}[ht]
+  \centering
+    \begin{subfigure}[b]{1.0\textwidth}
+    \centering
+    \includegraphics[height = 47mm]{img/distromel-chassis.jpg}
+    \caption{No compartimento de carga, Distromel \cite{distromel-news}}
+  \end{subfigure}
+
+  \vspace{0.5em}
+
+  \begin{subfigure}[b]{0.52\textwidth}
+    \centering
+    \includegraphics[height = 46mm]{img/moba-rear-elevator.jpg}
+    \caption{No braço elevatório, MOBA \cite{moba-dynamic-scale}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.47\textwidth}
+    \centering
+    \includegraphics[height = 46mm]{img/distromel-rear-elevator.jpg}
+    \caption{No braço elevatório, Distromel \cite{distromel-news}}
+  \end{subfigure}
+  \caption{Soluções com células de carga apresentadas por algumas empresas}
+\end{figure}
+
+Várias empresas fornecem soluções de pesagem de lixo a bordo de camiões, como a MOBA \cite{moba} e a ELTE \cite{elte-dynamic-weighing} (com soluções para carregamento frontal e traseiro), ou a espanhola Distromel \cite{distromel-generic, distromel-news} (pelo menos para carregamento traseiro).
+
+Em muitos camiões de lixo este tipo de tecnologia já se encontra incluído, mas pode ser também facilmente adicionado a camiões que não a tenham. Estimamos (a partir dos preços de fábrica dos componentes e da mão-de-obra) que a instalação de um destes sistemas num camião de lixo custa entre \SIrange{100}{200}{\euro}, o que é incomparavelmente menor do que a escala de magnitude deste contexto, uma vez que um camião de lixo novo custa à volta de \SIrange{100000}{200000}{\euro}.
+
+\subsection{Medidor de nível}
+
+Na gestão inteligente de resíduos sólidos urbanos, é essencial saber, além do peso, quanto volume ainda se encontra vazio num contentor. Os chamados FLS (\textit{fill-level sensors}, sensores de nível de enchimento) permitem medir a distância entre a tampa e o lixo, sendo assim capazes de determinar quanto espaço ainda se encontra livre. Estes dispositivos são colocados no interior dos contentores, voltados para baixo, e usam sensores infravermelho ou ultrasons.
+
+Estes dispositivos são especialmente desenhados para terem grande autonomia, durabilidade, resistência a impactos (comum no processo de recolha de resíduos) e às substâncias que possam ser libertadas pelos resíduos, de forma a adaptarem-se bem às condições de operação esperadas. Várias empresas fornecem este género de dispositivos, entre as quais a Distromel \cite{distromel-generic}, ELTE \cite{elte-fls} e MOBA \cite{moba-fls}. Alguns incluem ainda sensores de temperatura para detetar incêndios dentro dos contentores (vandalismo ou fogo acidental) e acelerómetros para detetar movimentações inesperadas (roubo do contentor, do lixo ou vandalismo).
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.52\textwidth}
+    \centering
+    \includegraphics[height = 40mm]{img/elte-fls.jpg}
+    \caption{ELTE Bin Box \cite{elte-fls}}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.47\textwidth}
+    \centering
+    \includegraphics[height = 40mm]{img/moba-fls.png}
+    \caption{MOBA FLS \cite{moba-fls}}
+  \end{subfigure}
+  \caption{Sensores de nível de enchimento}
+\end{figure}
+
 \nocite{*}
 \bibliographystyle{acm}
 \clearpage
