@@ -6,7 +6,7 @@
 - **Short description:** A proposal for a PAYT (*pay as you throw*) system to apply at a municipal level
 - **Institution:** [FEUP](https://sigarra.up.pt/feup/en/web_page.Inicial)
 - **Course:** [PPIN](https://sigarra.up.pt/feup/en/UCURR_GERAL.FICHA_UC_VIEW?pv_ocorrencia_id=459488) (Personal and Interpersonal Proficiency)
-<!-- - **Project grade:** ??.?/20.0 -->
+- **Report grade:** 18.0/20.0
 - **Group members:**
     - [Diogo Miguel Ferreira Rodrigues](https://github.com/dmfrodrigues) (<dmfrodrigues2000@gmail.com>)
     - [João António Cardoso Vieira e Basto de Sousa](https://github.com/JoaoASousa) (<up201806613@edu.fe.up.pt>)
